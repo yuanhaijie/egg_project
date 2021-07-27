@@ -1,19 +1,19 @@
 <template>
 	<view class="page">
-		<form @submit="formSubmit" @reset="formReset">
-			<view class="uni-form-item uni-column">
-				<view class="title">username</view>
-				<input class="uni-input"  v-model="username" placeholder="请输入用户名" />
+		<view class="login_form">
+			<view class="login_form_item">
+				<view class="title">用户名:</view>
+				<input class="uni-input" v-model="username" placeholder="请输入用户名" />
 			</view>
-			<view class="uni-form-item uni-column">
-				<view class="title">password</view>
-				<input class="uni-input"  v-model="password" placeholder="请输入用户密码" password="true" />
+			<view class="login_form_item">
+				<view class="title">密码:</view>
+				<input class="uni-input" v-model="password" placeholder="请输入用户密码" password="true" />
 			</view>
-			<view class="uni-btn-v">
-				<button form-type="submit">Submit</button>
-				<button type="default" form-type="reset">Reset</button>
+			<view class="login_form_item">
+				<view class="login_form_btn" @click="login">登录</view>
+				<view class="login_form_btn" @click="toRegisterPage">注册</view>
 			</view>
-		</form>
+		</view>
 	</view>
 </template>
 
@@ -26,47 +26,40 @@
 			}
 		},
 		methods: {
-			formSubmit(e) {
+			login() {
 				let that = this
-				var formdata = e.detail.value
 				uni.showLoading({
 					title: '加载中>>>'
 				})
 				uni.request({
 					url: 'http://127.0.0.1:7001/login',
 					method: 'POST',
-					header: {
-						'x-csrf-token':that.getCookie("csrfToken")
-					},
-					data:{
-						name:that.username,
-						psd:that.password
+					data: {
+						name: that.username,
+						psd: that.password
 					},
 					success(res) {
 						console.log(res.data)
-						if(res.data.error_code == 1){
+						if (res.data.error_code == 1) {
 							uni.showToast({
-								title:res.data.msg
+								title: res.data.msg
 							})
-							uni.setStorageSync('uuid',res.data.data.uuid)
+							uni.setStorageSync('uuid', res.data.data.uuid)
 							uni.navigateTo({
-								url:'../todo-list/todo-list'
+								url: '../index/index'
 							})
-						}else{
+						} else {
 							uni.showToast({
-								title:res.data.msg,
-								icon:'none'
+								title: res.data.msg,
+								icon: 'none'
 							})
 						}
-						
+
 					},
 					complete() {
 						uni.hideLoading()
 					}
 				})
-			},
-			formReset(e) {
-				console.log('清空数据')
 			},
 			getCookie(name) {
 				var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
@@ -74,6 +67,11 @@
 					return unescape(arr[2]);
 				else
 					return null;
+			},
+			toRegisterPage() {
+				uni.navigateTo({
+					url: '../register/register'
+				})
 			}
 		}
 	}
@@ -86,7 +84,33 @@
 		justify-content: center;
 	}
 
-	.uni-form-item .title {
-		padding: 20rpx 0;
+	.login_form {
+		height: 60vh;
+		width: 50vw;
+		border: #7ed99c 1px solid;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
+
+	.login_form_item {
+		height: 10vh;
+		width: 40vw;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		margin-bottom: 5vh;
+	}
+
+	.login_form_btn {
+		height: 4vh;
+		width: 12vh;
+		background-color: #007AFF;
+		color: #FFFFFF;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
 	}
 </style>

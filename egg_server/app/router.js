@@ -19,4 +19,7 @@ module.exports = app => {
   router.get('/getTodoList', controller.todo.getById);
   router.post('/addTodoList', controller.todo.addTodoList);
   router.post('/updateTodoList', controller.todo.updateTodoList);
+
+  // tools
+  router.post('/upload', controller.tools.saveAvatar);
 };

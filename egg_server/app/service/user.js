@@ -26,7 +26,8 @@ class UserService extends Service {
         const user = {
             name:ctx.request.body.name,
             psd:md5.update(ctx.request.body.psd).digest('hex'),
-            uuid:uuidv4()
+            uuid:uuidv4(),
+            ava:ctx.request.body.ava
         }
         const isExist = await this.app.mysql.get('user',{name:user.name})
         if(isExist){
@@ -36,7 +37,9 @@ class UserService extends Service {
             // 判断插入成功
             const insertSuccess = result.affectedRows === 1;
             if(insertSuccess){
-                return {  msg:"success"};
+                const data = await this.app.mysql.get('user',{uuid:user.uuid})
+                console.log('创建的角色信息:',data)
+                return {  error_code:200, msg:"success",data:{name:data.name,uuid:data.uuid,ava:data.ava}};
             }else {
                 return {  msg:"fail"};
             }

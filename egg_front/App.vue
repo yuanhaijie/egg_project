@@ -17,5 +17,8 @@
 	.page {
 		min-height:100vh;
 		width: 100vw;
+		background-image: url(static/egg_backgound.jpg);
+		background-size: 100% 100%;
+		
 	}
 </style>
