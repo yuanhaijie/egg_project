@@ -61,7 +61,7 @@ class UserService extends Service {
         const result = await this.app.mysql.get('user',options)
         console.log(result)
         if(result){
-            return {msg:"登录成功",data:result,error_code:1}
+            return {msg:"登录成功",data:{name:result.name,uuid:result.uuid,ava:result.ava},error_code:1}
         }else{
             return {msg:"账号或密码错误",error_code:2}
         }

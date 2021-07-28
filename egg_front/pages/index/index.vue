@@ -1,32 +1,47 @@
 <template>
 	<view class="page">
 		<view class="page_header">
+			<view class="page_logo">
+				<image class="page_logo_img" src="../../static/logo.png" mode=""></image>
+			</view>
 			<view class="user_ava" v-if="isLogin" @mouseover="show">
 				<image class="user_ava_img" :src="ava" mode=""></image>
 			</view>
 			
 			<view class="user_ava" v-else @click="toLoginPage">
-				<image class="user_ava_img" src="../../static/logo.png" mode=""></image>
+				<image class="user_ava_img" src="../../static/hacker.jpg" mode=""></image>
 			</view>
 			
-			<!-- <view class="user_list" v-if="isShow" @mouseleave="unShow">
-				
-			</view> -->
+			<view class="user_name" @mouseover="show">
+				{{name}}
+			</view>
+			
+			<view class="user_menu" v-if="isShow" @mouseleave="unShow">
+				<view class="user_menu_item">
+					用户信息
+				</view>
+				<view class="user_menu_divider">
+					
+				</view>
+				<view class="user_menu_item" @click="logout">
+					退出登录
+				</view>
+			</view>
 		</view>
-		<view class="todo_list">
+		<!-- <view class="todo_list">
 			<view class="list_item" v-for="item,index in list" :key="index">
 				{{index + 1}}-{{item}}
 				<view class="delete_item" @click="delete_item(index)">-</view>
 			</view>
-		</view>
-		<view class="add_list">
+		</view> -->
+		<!-- <view class="add_list">
 			<view class="add_left">
 				<input class="add_input" v-model="list_item" placeholder="请输入新的计划项" />
 			</view>
 			<view class="add_right" @click="addTodoList">
 				添加
 			</view>
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -37,14 +52,15 @@
 				this.getList()
 				this.isLogin = true
 				this.ava = uni.getStorageSync('user').ava
+				this.name = uni.getStorageSync('user').name
 			}
-			console.log('uuid',uni.getStorageSync('user').ava)
 		},
 		data() {
 			return {
 				list: [],
 				list_item: '',
 				ava:'',
+				name:'未登录',
 				isLogin: false,
 				isShow:false
 			}
@@ -181,6 +197,12 @@
 						}
 					}
 				})
+			},
+			logout(){
+				uni.clearStorageSync('user')
+				// #ifdef H5
+				window.location.reload()
+				// #endif
 			}
 		}
 	}
@@ -197,12 +219,36 @@
 	.page_header {
 		height: 10vh;
 		width: 100vw;
-		background-color: #fff6f9;
-		box-shadow: 2px 2px 2px #999999;
+		background-color: #FFFFFF;
+		box-shadow: 0 5px 10px #000000;
 		display: flex;
 		align-items: center;
-		margin-bottom: 1vh;
+		margin-bottom: 5vh;
 		position: relative;
+		animation: page 2s;
+	}
+	@keyframes page{
+		0%{
+			opacity: 0;
+		}
+		100%{
+			opacity: 1;
+		}
+	}
+	.page_logo {
+		height: 8vh;
+		width: 30vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		left: 5vw;
+		cursor: pointer;
+	}
+	.page_logo_img {
+		height: 8vh;
+		width: 30vh;
+		/* border-radius: 50%; */
 	}
 
 	.user_ava {
@@ -212,7 +258,8 @@
 		align-items: center;
 		justify-content: center;
 		position: absolute;
-		right: 2vw;
+		right: 5vw;
+		cursor: pointer;
 	}
 
 	.user_ava_img {
@@ -220,24 +267,55 @@
 		width: 8vh;
 		border-radius: 50%;
 	}
-	.user_list {
-		height: 20vh;
-		width: 5vw;
-		background-color: #fff6f9;
-		box-shadow: 0 2px 2px #C0C0C0;
+	.user_name {
+		cursor: pointer;
+		height: 8vh;
+		width: 8vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		right: 1vw;
+	}
+	.user_menu {
+		height: 12.5vh;
+		width: 6.5vw;
+		background-color: #FFFFFF;
+		box-shadow: 0 5px 5px #000000;
 		position: absolute;
 		right: 1.5vw;
-		top: 10vh;
+		top: 10.5vh;
 		display: flex;
 		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0  0 1vh 1vh;
+	}
+	
+	.user_menu_item {
+		cursor: pointer;
+		width: 6.5vw;
+		height: 6vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.user_menu_divider {
+		width: 6.5vw;
+		height: 0.5vh;
+		background-color: #555555;
+	}
+	.user_menu_item:hover {
+		background-color: #007AFF;
+		color: #FFFFFF;
 	}
 
 	.todo_list {
 		height: 50vh;
 		width: 50vw;
 		border-radius: 2vh;
-		background-color: #fff6f9;
-		box-shadow: 2px 2px 2px #999999;
+		background-color: #FFFFFF;
+		box-shadow: 0 5px 10px #000000;
 		display: flex;
 		/* justify-content: center; */
 		align-items: center;
@@ -254,7 +332,7 @@
 		margin-top: 1vh;
 		border-radius: 0.5vh;
 		background-color: #FFFFFF;
-		box-shadow: 2px 2px 2px #999999;
+		box-shadow: 0 5px 5px #999999;
 		position: relative;
 	}
 

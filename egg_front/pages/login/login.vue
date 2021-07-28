@@ -2,12 +2,10 @@
 	<view class="page">
 		<view class="login_form">
 			<view class="login_form_item">
-				<view class="title">用户名:</view>
-				<input class="uni-input" v-model="username" placeholder="请输入用户名" />
+				<input class="login_form_input" v-model="username" placeholder="请输入用户名" placeholder-style="color:#FFFFFF"/>
 			</view>
 			<view class="login_form_item">
-				<view class="title">密码:</view>
-				<input class="uni-input" v-model="password" placeholder="请输入用户密码" password="true" />
+				<input class="login_form_input" v-model="password" placeholder="请输入用户密码" placeholder-style="color:#FFFFFF" password="true" />
 			</view>
 			<view class="login_form_item">
 				<view class="login_form_btn" @click="login">登录</view>
@@ -41,13 +39,16 @@
 					success(res) {
 						console.log(res.data)
 						if (res.data.error_code == 1) {
+							uni.hideLoading()
+							uni.setStorageSync('user', res.data.data)
 							uni.showToast({
-								title: res.data.msg
-							})
-							uni.setStorageSync('uuid', res.data.data.uuid)
-							uni.navigateTo({
-								url: '../index/index'
-							})
+								title: res.data.msg,
+								success() {
+									uni.navigateTo({
+										url: '../index/index'
+									})
+								}
+							})				
 						} else {
 							uni.showToast({
 								title: res.data.msg,
@@ -87,7 +88,6 @@
 	.login_form {
 		height: 60vh;
 		width: 50vw;
-		border: #7ed99c 1px solid;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -102,11 +102,20 @@
 		justify-content: space-around;
 		margin-bottom: 5vh;
 	}
+	.login_form_input {
+		height: 6vh;
+		width: 60vh;
+		/* border: #FFFFFF 1px solid; */
+		border-radius: 1vh;
+		padding: 0 1vh;
+		color: #FFFFFF;
+		background-color: rgba(109, 112, 115, 0.5);
+	}
 
 	.login_form_btn {
 		height: 4vh;
 		width: 12vh;
-		background-color: #007AFF;
+		background-color: rgba(109, 112, 115, 0.5);
 		color: #FFFFFF;
 		display: flex;
 		justify-content: center;

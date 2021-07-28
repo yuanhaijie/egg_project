@@ -158,10 +158,11 @@
 	.register_form_input {
 		height: 6vh;
 		width: 60vh;
-		border: #FFFFFF 1px solid;
+		/* border: #FFFFFF 1px solid; */
 		border-radius: 1vh;
 		padding: 0 1vh;
 		color: #FFFFFF;
+		background-color: rgba(109, 112, 115, 0.5);
 	}
 	.register_form_upload {
 		cursor: pointer;
@@ -171,7 +172,7 @@
 		align-items: center;
 		justify-content: center;
 		border: #FFFFFF solid 1px;
-		border-radius: 2vh;
+		border-radius: 50%;
 		flex-direction: column;
 	}
 	.register_form_upload_tips {
@@ -181,11 +182,12 @@
 	.register_form_upload_ava {
 		height: 10vh;
 		width: 10vh;
+		border-radius: 50%;
 	}
 	.register_form_btn {
 		height: 6vh;
 		width: 62vh;
-		background-color: #007AFF;
+		background-color: rgba(109, 112, 115, 0.5);
 		border-radius: 1vh;
 		color: #FFFFFF;
 		display: flex;
