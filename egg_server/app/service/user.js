@@ -1,100 +1,75 @@
-'use strict';
+"use strict";
 
-const Service = require('egg').Service;
-const { v4: uuidv4 } = require('uuid');
-const crypto = require('crypto')
+const Service = require("egg").Service;
+const { v4: uuidv4 } = require("uuid");
+const crypto = require("crypto");
 
 class UserService extends Service {
-    // 获取用户列表
-    async getUserList() {
-      const list = await this.app.mysql.select('user');
-      return { data: list, msg:"success"};
-    }
-
-    // 根据用户姓名获取信息
-    async getUserByName() {
-        const ctx = this.ctx;
-        const name = ctx.params.name;
-        const result = await this.app.mysql.select('user',{name:name});
-        return { data: result, msg:"success"};
-    }
-
-    // 添加用户
-    async addUser() {
-        const md5 = crypto.createHash('md5')
-        const ctx = this.ctx;
-        const user = {
-            name:ctx.request.body.name,
-            psd:md5.update(ctx.request.body.psd).digest('hex'),
-            uuid:uuidv4(),
-            ava:ctx.request.body.ava
-        }
-        const isExist = await this.app.mysql.get('user',{name:user.name})
-        if(isExist){
-           return {msg:'该用户名已存在'}
-        }else {
-            const result = await this.app.mysql.insert('user',user);
-            // 判断插入成功
-            const insertSuccess = result.affectedRows === 1;
-            if(insertSuccess){
-                const data = await this.app.mysql.get('user',{uuid:user.uuid})
-                console.log('创建的角色信息:',data)
-                return {  error_code:200, msg:"success",data:{name:data.name,uuid:data.uuid,ava:data.ava}};
-            }else {
-                return {  msg:"fail"};
-            }
-        }
-      }
-
-      // 登录
-      async login(){
-        const md5 = crypto.createHash('md5')
-        const ctx = this.ctx;
-        const user = {
-            name:ctx.request.body.name,
-            psd:md5.update(ctx.request.body.psd).digest('hex'),
-        }
-        const options = {
-              name: user.name,
-              psd: user.psd
-        }
-        const result = await this.app.mysql.get('user',options)
-        console.log(result)
-        if(result){
-            return {msg:"登录成功",data:{name:result.name,uuid:result.uuid,ava:result.ava},error_code:1}
-        }else{
-            return {msg:"账号或密码错误",error_code:2}
-        }
-      }
-
-      // 修改用户密码
-      async updatePsd() {
-        const md5 = crypto.createHash('md5')
-        const ctx = this.ctx;
-        const user = {
-            name:ctx.request.body.name,
-            psd:md5.update(ctx.request.body.psd).digest('hex'),
-            uuid:ctx.request.body.uuid
-        }
-        const options = {
-            where: {
-              uuid: user.uuid
-            }
-        }
-        const isExist = await this.app.mysql.get('user',{name:user.name})
-        if(isExist){
-            const result = await this.app.mysql.update('user',user,options);
-            // 判断插入成功
-             const insertSuccess = result.affectedRows === 1;
-             if(insertSuccess){
-                 return {  msg:"修改成功"};
-             }else {
-                 return {  msg:"修改失败"};
-             }
-        }else {
-            return {msg:"该用户不存在"}
-        }
-      }
+  // 注册用户
+  async register(){
+    const md5 = crypto.createHash("md5");
+    const ctx = this.ctx;
+    const user = {
+      account: ctx.request.body.account,
+      password: md5.update(ctx.request.body.password).digest("hex"),
+      nick_name: ctx.request.body.nick_name,
+      avatar: ctx.request.body.avatar,
+      uuid: uuidv4(),
+      sex: ctx.request.body.avatar || '',
+      age: ctx.request.body.age || '',
+      address: ctx.request.body.address || '',
+      other: ctx.request.body.other || ''
+    };
+    const result = await this.app.mysql.insert("egg_user", user);
+    console.log('注册结果>>>',result)
+    // 判断插入成功
+   if(result.affectedRows === 1){
+     const data = await this.app.mysql.select("egg_user",{
+       where:{
+         uuid:user.uuid
+       },
+       colums:['account','nick_name','avatar','uuid','sex','age','address','other']
+     })
+     console.log('查询结果>>>',data)
+     return {
+       error_code:200,
+       msg: '注册成功',
+       data: data[0]
+     }
+   }else {
+     return {
+      error_code:101,
+      msg: '注册失败',
+      data: result
+     }
+   }
   }
 
-  module.exports = UserService;
+  // 用户登录
+  async login(){
+    const md5 = crypto.createHash("md5");
+    const ctx = this.ctx;
+    const user = {
+      account: ctx.request.body.account,
+      password: md5.update(ctx.request.body.password).digest("hex"),
+    };
+    const result = await this.app.mysql.select("egg_user", {
+      where:{
+        account: user.account,
+        password: user.password,
+      },
+      colums:['account','nick_name','avatar','uuid','sex','age','address','other']
+    });
+    if (result) {
+      return {
+        msg: "登录成功",
+        data: result[0],
+        error_code: 200,
+      };
+    } else {
+      return { msg: "账号或密码错误", error_code: 101 };
+    }
+  }
+}
+
+module.exports = UserService;

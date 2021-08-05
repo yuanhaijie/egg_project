@@ -49,7 +49,6 @@
 	export default {
 		onLoad() {
 			if(uni.getStorageSync('user').uuid){
-				this.getList()
 				this.isLogin = true
 				this.ava = uni.getStorageSync('user').ava
 				this.name = uni.getStorageSync('user').name
@@ -229,7 +228,7 @@
 	}
 	@keyframes page{
 		0%{
-			opacity: 0;
+			opacity: 0.1;
 		}
 		100%{
 			opacity: 1;
